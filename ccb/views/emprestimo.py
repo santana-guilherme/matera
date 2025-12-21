@@ -19,4 +19,4 @@ class EmprestimoViewSet(viewsets.ModelViewSet):
         if request_user.is_superuser:
             return Emprestimo.objects.all()
         else:
-            return Emprestimo.objects.filter(client=request_user)
+            return Emprestimo.objects.filter(client__id=request_user.id)

@@ -3,12 +3,12 @@
 ### Emprestimo
 
 * ccb/emprestimos/
-* ccb/emprestimos/<uuid>
-* ccb/emprestimos/<uuid>/saldo_devedor
+* ccb/emprestimos/`<uuid>`
+* ccb/emprestimos/`<uuid>`/saldo_devedor
 
 ### Pagamentos
 * ccb/pagamentos/
-* ccb/pagamentos/<uuid>
+* ccb/pagamentos/`<uuid>`
 
 ### Autenticação
 * Endpoint default do `rest_framework_simplejwt`: `api/token`
@@ -18,7 +18,7 @@
 
 
 ## Execução
-
+* Create a `local_settings.py` file under `matera` folder using the `local_settings.py-sample` as an example
 * install uv: https://docs.astral.sh/uv/getting-started/installation/
 * `$ uv sync`
 * `$ source .venv/bin/activate`

@@ -7,11 +7,10 @@ from ccb.serializers.pagamento import PagamentoSerializer
 
 
 class EmpretimoSerializer(serializers.ModelSerializer):
-    ip = serializers.IPAddressField(read_only=True)
-
     class Meta:
         model = Emprestimo
         fields = "__all__"
+        read_only_fields = ["uuid", "ip", "cliente"]
 
     def validate_data_solicitacao(self, value):
         # Usually api timeouts are not bigger than 2 min, so we set this
@@ -24,6 +23,8 @@ class EmpretimoSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if request := self.context.get("request"):
             attrs["ip"] = request.META.get("REMOTE_ADDR")
+            attrs["cliente"] = request.user
+
         return super().validate(attrs)
 
 

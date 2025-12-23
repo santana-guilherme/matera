@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from ccb.models.emprestimo import Emprestimo
+from ccb.models.pagamento import Pagamento
 
 
 class EmprestimoTests(APITestCase):
@@ -75,3 +76,34 @@ class EmprestimoTests(APITestCase):
         response = self.client.get(url, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, {"saldo_devedor": Decimal("5115.00")})
+
+    @patch("ccb.models.emprestimo.datetime")
+    def test_get_saldo_devedor_with_payments(self, datetime_mock):
+        """
+        Test action saldo_devedor with some payments
+        """
+        datetime_mock.now.return_value = datetime(2025, 4, 5)
+
+        empretimo_obj = Emprestimo.objects.create(
+            **{
+                "valor_nominal": 5000,
+                "taxa_juros": 0.023,
+                "banco": "nome banco",
+                "cliente": self.user,
+                "ip": "127.0.0.1",
+                "data_solicitacao": datetime(2025, 3, 5),
+            }
+        )
+
+        Pagamento.objects.create(
+            **{
+                "valor": Decimal("500.00"),
+                "emprestimo": empretimo_obj,
+            }
+        )
+
+        url = reverse("emprestimo-saldo-devedor", kwargs={"pk": empretimo_obj.uuid})
+
+        response = self.client.get(url, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {"saldo_devedor": Decimal("4615.00")})

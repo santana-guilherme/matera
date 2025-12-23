@@ -8,6 +8,7 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.utils.timezone import now
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +25,7 @@ class Emprestimo(models.Model):
     )
     taxa_juros = models.FloatField()  # mes
     ip = models.GenericIPAddressField()
-    data_solicitacao = models.DateTimeField(default=datetime.now)
+    data_solicitacao = models.DateTimeField(default=now)
     banco = models.CharField(max_length=100)
     data_quitacao = models.DateField(null=True)
 

@@ -7,3 +7,5 @@ class PagamentoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pagamento
         fields = "__all__"
+
+        read_only_fields = ["data"]

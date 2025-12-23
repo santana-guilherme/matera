@@ -10,7 +10,6 @@ from ccb.models.emprestimo import Emprestimo
 
 class EmprestimoTests(APITestCase):
     def setUp(self):
-        # Create any necessary test data (e.g., users, objects)
         User = get_user_model()
         self.user = User.objects.create_user(username="noadmin", password="pw")
         self.client.force_login(user=self.user)

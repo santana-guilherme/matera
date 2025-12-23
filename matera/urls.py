@@ -17,12 +17,16 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import include, path
-from rest_framework.authtoken import views
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 from ccb.urls import router as ccb_router
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("ccb/", (include(ccb_router.urls))),
-    path("api-token-auth/", views.obtain_auth_token),
+    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 ]

@@ -16,8 +16,13 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
+from rest_framework.authtoken import views
+
+from ccb.urls import router as ccb_router
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("ccb/", (include(ccb_router.urls))),
+    path("api-token-auth/", views.obtain_auth_token),
 ]

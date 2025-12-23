@@ -6,4 +6,4 @@ from ccb.models.pagamento import Pagamento
 class PagamentoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pagamento
-        exclude = ["uuid"]
+        fields = "__all__"

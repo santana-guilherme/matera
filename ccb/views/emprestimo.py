@@ -27,7 +27,7 @@ class EmprestimoViewSet(viewsets.ModelViewSet):
     def saldo_devedor(self, request, pk=None):
         emprestimo = self.get_object()
         saldo_devedor = emprestimo.saldo_devedor()
-        if not saldo_devedor:
+        if saldo_devedor is None:
             return Response(
                 {"error": "Error calculating saldo devedor"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

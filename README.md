@@ -13,7 +13,7 @@
 ### Autenticação
 * Endpoint default do `rest_framework_simplejwt`: `api/token`
 
-## Tests
+## Testes
 * `$ python manage.py test`
 
 
@@ -35,3 +35,31 @@
     "password": "changeMe123"
     }'
     ```
+## Organização do projeto
+* As funcionalidades pedidas foram implementadas no app ccb
+```
+ccb
+├── README.md
+├── __init__.py
+├── admin.py
+├── apps.py
+├── migrations
+├── models
+│   ├── __init__.py
+│   ├── emprestimo.py # As regras de negócio de saldo devedor foi implementada na model de emprestimo
+│   └── pagamento.py
+├── serializers
+│   ├── __init__.py
+│   ├── emprestimo.py
+│   └── pagamento.py
+├── tests
+│   ├── __init__.py
+│   ├── e2e
+│   │   ├── __init__.py
+│   │   └── test_emprestimo.py
+├── urls.py
+└── views
+    ├── __init__.py
+    ├── emprestimo.py
+    └── pagamento.py
+```

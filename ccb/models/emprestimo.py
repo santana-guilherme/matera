@@ -8,6 +8,8 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import CharField, F, Value
+from django.db.models.functions import Cast, Concat
 from django.utils.timezone import now
 
 logger = logging.getLogger(__name__)
@@ -37,15 +39,36 @@ class Emprestimo(models.Model):
             months_difference = self._get_month_difference(
                 self.data_solicitacao, datetime.now()
             )
+            pagamentos = (
+                self.pagamentos.annotate(
+                    year_month=Concat(
+                        Cast(F("data__date__year"), CharField()),
+                        Value("-"),
+                        Cast(F("data__date__month"), CharField()),
+                    )
+                )
+                .values("year_month")
+                .annotate(models.Sum("valor"))
+            )
+            pagamentos = {
+                pagamento.get("year_month"): pagamento.get("valor__sum")
+                for pagamento in pagamentos
+            }
 
-            total_pago = self.pagamentos.aggregate(models.Sum("valor"))
-            total_pago = total_pago.get("valor__sum") or Decimal.from_float(0.0)
-
-            saldo_devedor = (
-                self.valor_nominal
-                * Decimal.from_float((1 + self.taxa_juros) ** months_difference)
-            ) - total_pago
-            return saldo_devedor.quantize(Decimal("0.00"))
+            saldo_devedor = self.valor_nominal
+            for i in range(months_difference):
+                juros_mes = saldo_devedor * Decimal.from_float(self.taxa_juros)
+                mes_referencia = self.data_solicitacao + relativedelta(months=i)
+                saldo_devedor = saldo_devedor - (
+                    Decimal(
+                        pagamentos.get(
+                            mes_referencia.strftime("%Y-%-m"), Decimal("0.0")
+                        )
+                        - juros_mes
+                    )
+                )
+            saldo_devedor = saldo_devedor.quantize(Decimal("0.00"))
+            return saldo_devedor
         except Exception as ex:
             logging.exception(
                 f"Error calculating saldo_devedor. Ex: {ex}", exc_info=True
